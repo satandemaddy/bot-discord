@@ -1,64 +1,73 @@
-console.log("INICIANDO...");
+const { 
+  Client, 
+  GatewayIntentBits 
+} = require('discord.js');
 
-const { Client, GatewayIntentBits } = require('discord.js');
-const { joinVoiceChannel, entersState, VoiceConnectionStatus } = require('@discordjs/voice');
+const { 
+  joinVoiceChannel, 
+  getVoiceConnection 
+} = require('@discordjs/voice');
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildVoiceStates
   ]
 });
 
-client.once('ready', async () => {
+const PREFIX = 'n.';
+const OWNER_ID = '1445527702332244159';
+
+client.once('ready', () => {
   console.log(`Bot listo como ${client.user.tag}`);
+});
 
-  try {
-    const channel = await client.channels.fetch("1476366375218843713");
+process.on('uncaughtException', console.error);
+process.on('unhandledRejection', console.error);
 
-    if (!channel) {
-      console.log("No encontré el canal");
-      return;
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
+  if (!message.content.startsWith(PREFIX)) return;
+  if (message.author.id !== OWNER_ID) return;
+
+  const cmd = message.content.slice(PREFIX.length).trim().toLowerCase();
+  const channel = message.member.voice.channel;
+
+  if (cmd === 'join') {
+    if (!channel) return message.reply('Metete a un VC primero');
+
+    try {
+      const existing = getVoiceConnection(channel.guild.id);
+
+      if (existing && existing.joinConfig.channelId !== channel.id) {
+        existing.destroy();
+      }
+
+      joinVoiceChannel({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator,
+        selfDeaf: false,
+        selfMute: false
+      });
+
+      message.reply('Entré al VC');
+
+    } catch (err) {
+      console.error(err);
+      message.reply('Error al entrar');
     }
+  }
 
-    if (!channel.isVoiceBased()) {
-      console.log("El canal no es de voz");
-      return;
-    }
+  if (cmd === 'leave') {
+    const connection = getVoiceConnection(message.guild.id);
+    if (!connection) return message.reply('No estoy en VC');
 
-    const connection = joinVoiceChannel({
-      channelId: channel.id,
-      guildId: channel.guild.id,
-      adapterCreator: channel.guild.voiceAdapterCreator,
-      selfDeaf: false
-    });
-
-    // Evita crash y confirma conexión
-    await entersState(connection, VoiceConnectionStatus.Ready, 20_000);
-
-    console.log("Entré al VC automáticamente");
-
-    connection.on('error', (e) => {
-      console.error("Error de conexión VC:", e);
-    });
-
-  } catch (error) {
-    console.error("Error general al entrar al VC:", error);
+    connection.destroy();
+    message.reply('Me salí');
   }
 });
 
-client.on('error', (err) => {
-  console.error("Error cliente:", err);
-});
-
-process.on('unhandledRejection', (err) => {
-  console.error("UnhandledRejection:", err);
-});
-
-process.on('uncaughtException', (err) => {
-  console.error("UncaughtException:", err);
-});
-
-client.login(process.env.TOKEN)
-  .then(() => console.log("LOGIN OK"))
-  .catch(err => console.error("ERROR LOGIN:", err));
+client.login(process.env.TOKEN);
