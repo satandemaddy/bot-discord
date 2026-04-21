@@ -136,7 +136,7 @@ client.on('messageCreate', async (message) => {
     }
 
     // 💘 AMOR
-    if (cmd === 'amor') {
+    if (cmd === 'lov') {
       const target = message.mentions.users.first();
       if (!target) {
         return message.reply('❌ Menciona a alguien\nEjemplo: n.amor @persona');
@@ -151,7 +151,7 @@ client.on('messageCreate', async (message) => {
         frase = [
           `Hoy ${name}… mejor ni te emociones 😬`,
           `${name} anda bien distante hoy 👀`,
-          `Uy… ${name} no está en su mejor momento contigo 💀`,
+          `Uy… ${name} mejor nada 💀`,
           `${name} hoy no trae ganas la neta 😅`,
           `Se siente frío el asunto con ${name} 🥶`
         ];
