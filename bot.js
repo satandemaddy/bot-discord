@@ -157,7 +157,7 @@ client.on('messageCreate', async (message) => {
         ];
       } else if (porcentaje <= 40) {
         frase = [
-          `${name} te quiere… pero poquito 😬`,
+          `${name} te quiere… pero leve 😬`,
           `Hoy ${name} anda raro contigo 🤨`,
           `No es el mejor día con ${name} pero tampoco el peor`,
           `${name} está dudando hoy 👀`,
@@ -166,26 +166,25 @@ client.on('messageCreate', async (message) => {
       } else if (porcentaje <= 60) {
         frase = [
           `Relación estable con ${name} 😌`,
-          `${name} te quiere, pero sin exagerar 😅`,
+          `${name} te quiere, pero lo normal 😅`,
           `Todo tranquilo con ${name}`,
-          `Van bien, pero pueden mejorar 👀`,
-          `${name} anda en modo neutral hoy`
+          `Definitivamente hay algo 👀`
         ];
       } else if (porcentaje <= 80) {
         frase = [
           `${name} te quiere bastante 💘`,
           `Se nota que ${name} está feliz contigo 😎`,
-          `Hay buena vibra con ${name} ✨`,
-          `${name} está bastante conectado contigo`,
+          `Hay conexión con ${name} ✨`,
+          `${name} está bastante interesad@`,
           `Todo fluye bien con ${name} 😏`
         ];
       } else if (porcentaje < 100) {
         frase = [
-          `${name} está bien enamorad@ de ti 💖`,
+          `${name} es el amor de tu vida 💖`,
           `Ya casi no pueden vivir sin ti 😳`,
-          `${name} está en modo amor total 💘`,
+          `${name} está perdidamente enamorad@ 💘`,
           `Esto ya es cosa seria con ${name} 🔥`,
-          `Nivel alto de amor con ${name}`
+          `Amor  eterno con ${name}`
         ];
       } else {
         frase = [
