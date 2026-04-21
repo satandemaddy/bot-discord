@@ -43,125 +43,121 @@ process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
 
 client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
-  if (!message.content.startsWith(PREFIX)) return;
+  try {
+    if (message.author.bot) return;
+    if (!message.content.startsWith(PREFIX)) return;
 
-  const args = message.content.slice(PREFIX.length).trim().split(/ +/);
-  const cmd = args.shift().toLowerCase();
+    const args = message.content.slice(PREFIX.length).trim().split(/ +/);
+    const cmd = args.shift()?.toLowerCase();
 
-  const channel = message.member.voice.channel;
+    const channel = message.member?.voice?.channel;
 
-  // 🔊 JOIN
-  if (cmd === 'join') {
-    if (message.author.id !== OWNER_ID) return;
-    if (!channel) return message.reply('Metete a un VC primero');
+    console.log("CMD:", cmd, "ARGS:", args);
 
-    try {
-      const existing = getVoiceConnection(channel.guild.id);
+    // 🔊 JOIN
+    if (cmd === 'join') {
+      if (message.author.id !== OWNER_ID) return;
+      if (!channel) return message.reply('Métete a un VC primero');
 
-      if (existing && existing.joinConfig.channelId !== channel.id) {
-        existing.destroy();
-      }
+      const existing = getVoiceConnection(message.guild.id);
+      if (existing) existing.destroy();
 
       joinVoiceChannel({
         channelId: channel.id,
-        guildId: channel.guild.id,
-        adapterCreator: channel.guild.voiceAdapterCreator,
-        selfDeaf: false,
-        selfMute: false
+        guildId: message.guild.id,
+        adapterCreator: message.guild.voiceAdapterCreator,
+        selfDeaf: false
       });
 
-      message.reply('Entré al VC');
-
-    } catch (err) {
-      console.error(err);
-      message.reply('Error al entrar');
-    }
-  }
-
-  // 🔇 LEAVE
-  if (cmd === 'leave') {
-    if (message.author.id !== OWNER_ID) return;
-
-    const connection = getVoiceConnection(message.guild.id);
-    if (!connection) return message.reply('No estoy en VC');
-
-    connection.destroy();
-    message.reply('Me salí');
-  }
-
-  // 🎬 SET VC
-  if (cmd === 'setvc') {
-    if (message.author.id !== OWNER_ID) {
-      return message.reply('❌ No tienes permiso');
+      return message.reply('Entré al VC');
     }
 
-    if (!channel) {
-      return message.reply('❌ Debes estar en un VC');
+    // 🔇 LEAVE
+    if (cmd === 'leave') {
+      if (message.author.id !== OWNER_ID) return;
+
+      const connection = getVoiceConnection(message.guild.id);
+      if (!connection) return message.reply('No estoy en VC');
+
+      connection.destroy();
+      return message.reply('Me salí');
     }
 
-    if (args.length < 1) {
-      return message.reply('❌ Uso: n.setvc horas [minutos]');
+    // 🎬 SET VC
+    if (cmd === 'setvc') {
+      if (message.author.id !== OWNER_ID) {
+        return message.reply('❌ No tienes permiso');
+      }
+
+      if (!channel) {
+        return message.reply('❌ Debes estar en un VC');
+      }
+
+      if (args.length < 1) {
+        return message.reply('❌ Uso: n.setvc horas [minutos]');
+      }
+
+      let hours = parseInt(args[0]);
+      let minutes = args[1] ? parseInt(args[1]) : 0;
+
+      if (isNaN(hours) || isNaN(minutes) || minutes >= 60 || hours < 0 || minutes < 0) {
+        return message.reply('❌ Uso inválido\nEjemplo: n.setvc 300 o n.setvc 300 15');
+      }
+
+      data[channel.id] = {
+        baseTime: (hours * 60 + minutes) * 60000,
+        startTime: Date.now()
+      };
+
+      saveData();
+
+      return message.reply(`✅ VC configurado\n⏱️ Tiempo base: ${hours}h ${minutes}m`);
     }
 
-    let hours = parseInt(args[0]);
-    let minutes = args[1] ? parseInt(args[1]) : 0;
+    // ⏱️ VER VC
+    if (cmd === 'vc') {
+      if (!channel) {
+        return message.reply('❌ No estás en un canal de voz');
+      }
 
-    if (isNaN(hours) || isNaN(minutes) || minutes >= 60 || hours < 0 || minutes < 0) {
-      return message.reply('❌ Uso inválido\nEjemplo: n.setvc 300 o n.setvc 300 15');
-    }
+      const vc = data[channel.id];
 
-    data[channel.id] = {
-      baseTime: (hours * 60 + minutes) * 60000,
-      startTime: Date.now()
-    };
+      if (!vc) {
+        return message.reply('❌ Este VC no tiene tiempo configurado\nUsa: n.setvc');
+      }
 
-    saveData();
+      const elapsed = Date.now() - vc.startTime;
+      const total = vc.baseTime + elapsed;
 
-    message.reply(`✅ VC configurado\n⏱️ Tiempo base: ${hours}h ${minutes}m`);
-  }
+      const totalMinutes = Math.floor(total / 60000);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
 
-  // ⏱️ VER VC
-  if (cmd === 'vc') {
-    if (!channel) {
-      return message.reply('❌ No estás en un canal de voz');
-    }
-
-    const vc = data[channel.id];
-
-    if (!vc) {
-      return message.reply('❌ Este VC no tiene tiempo configurado\nUsa: n.setvc');
-    }
-
-    const elapsed = Date.now() - vc.startTime;
-    const total = vc.baseTime + elapsed;
-
-    const totalMinutes = Math.floor(total / 60000);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    message.reply(
+      return message.reply(
 `🎬 VC CINEMA
 ━━━━━━━━━━━━━━━
 ⏱️ ${hours}h ${minutes}m
 👥 ${channel.members.size} personas`
-    );
-  }
-
-  // ♻️ RESET
-  if (cmd === 'resetvc') {
-    if (message.author.id !== OWNER_ID) {
-      return message.reply('❌ No tienes permiso');
+      );
     }
 
-    if (!channel) return;
+    // ♻️ RESET
+    if (cmd === 'resetvc') {
+      if (message.author.id !== OWNER_ID) {
+        return message.reply('❌ No tienes permiso');
+      }
 
-    delete data[channel.id];
-    saveData();
+      if (!channel) return;
 
-    message.reply('♻️ VC reiniciado');
+      delete data[channel.id];
+      saveData();
+
+      return message.reply('♻️ VC reiniciado');
+    }
+
+  } catch (err) {
+    console.error("ERROR:", err);
   }
 });
 
-// 🔥 IMPORTANTE PARA RAILWAY
 client.login(process.env.TOKEN);
