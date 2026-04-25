@@ -50,25 +50,34 @@ client.on('messageCreate', async (message) => {
 
     const channel = message.member?.voice?.channel;
 
-    // 🔊 JOIN
+    // 🔊 JOIN (ARREGLADO)
     if (cmd === 'join') {
       if (message.author.id !== OWNER_ID) return;
       if (!channel) return message.reply('Métete a un VC primero');
 
       const existing = getVoiceConnection(message.guild.id);
-      if (existing) existing.destroy();
 
-      joinVoiceChannel({
-        channelId: channel.id,
-        guildId: message.guild.id,
-        adapterCreator: message.guild.voiceAdapterCreator,
-        selfDeaf: false
-      });
+      // 🔥 FIX: ya no destruimos conexión, evitamos conflicto
+      if (existing) {
+        return message.reply('Ya estoy conectado en este server');
+      }
 
-      return message.reply('Entré al VC');
+      try {
+        joinVoiceChannel({
+          channelId: channel.id,
+          guildId: message.guild.id,
+          adapterCreator: message.guild.voiceAdapterCreator,
+          selfDeaf: false
+        });
+
+        return message.reply('Entré al VC');
+      } catch (err) {
+        console.error(err);
+        return message.reply('Error al entrar al VC');
+      }
     }
 
-    // 🔇 LEAVE
+    // 🔇 LEAVE (igual)
     if (cmd === 'leave') {
       if (message.author.id !== OWNER_ID) return;
 
@@ -79,7 +88,7 @@ client.on('messageCreate', async (message) => {
       return message.reply('Me salí');
     }
 
-    // 🎬 SET VC
+    // 🎬 SET VC (igual)
     if (cmd === 'setvc') {
       if (message.author.id !== OWNER_ID) return message.reply('❌ No tienes permiso');
       if (!channel) return message.reply('❌ Debes estar en un VC');
@@ -102,7 +111,7 @@ client.on('messageCreate', async (message) => {
       return message.reply(`✅ VC configurado\n⏱️ Tiempo base: ${hours}h ${minutes}m`);
     }
 
-    // ⏱️ VER VC
+    // ⏱️ VER VC (igual)
     if (cmd === 'vc') {
       if (!channel) return message.reply('❌ No estás en un canal de voz');
 
@@ -124,7 +133,7 @@ client.on('messageCreate', async (message) => {
       );
     }
 
-    // ♻️ RESET
+    // ♻️ RESET (igual)
     if (cmd === 'resetvc') {
       if (message.author.id !== OWNER_ID) return message.reply('❌ No tienes permiso');
       if (!channel) return;
@@ -135,7 +144,7 @@ client.on('messageCreate', async (message) => {
       return message.reply('♻️ VC reiniciado');
     }
 
-    // 💘 AMOR
+    // 💘 LOV (TU VERSIÓN ORIGINAL intacta)
     if (cmd === 'lov') {
       const target = message.mentions.users.first();
       if (!target) {
@@ -184,7 +193,7 @@ client.on('messageCreate', async (message) => {
           `Ya casi no pueden vivir sin ti 😳`,
           `${name} está perdidamente enamorad@ 💘`,
           `Esto ya es cosa seria con ${name} 🔥`,
-          `Amor  eterno con ${name}`
+          `Amor eterno con ${name}`
         ];
       } else {
         frase = [
