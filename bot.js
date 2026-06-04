@@ -274,91 +274,91 @@ channel.members.size +
     }
 
     // ❤️ LOV
-    if (cmd === 'lov') {
+if (cmd === 'lov') {
 
-      const target = message.mentions.users.first();
+  const target = message.mentions.users.first();
 
-      if (!target) {
-        return message.reply(
-'❌ Menciona a alguien\nEjemplo: n.lov @persona'
-);
-      }
+  if (!target) {
+    return message.reply(
+      '❌ Menciona a alguien\nEjemplo: n.lov @persona'
+    );
+  }
 
-      const name =
-        message.guild.members.cache.get(target.id)?.displayName ||
-        target.username;
+  const name =
+    message.guild.members.cache.get(target.id)?.displayName ||
+    target.username;
 
-      const porcentaje = Math.floor(Math.random() * 101);
+  const porcentaje = Math.floor(Math.random() * 101);
 
-      let frase = "";
+  let frase = [];
 
-      if (porcentaje <= 20) {
+  if (porcentaje <= 20) {
 
-        frase = [
-          `Hoy ${name}… mejor ni te emociones 😬`,
-          `${name} anda bien distante hoy 👀`,
-          `Uy… ${name} mejor nada 💀`,
-          `${name} hoy no trae ganas la neta 😅`,
-          `Se siente frío el asunto con ${name} 🥶`
-        ];
+    frase = [
+      'Hoy ' + name + '... mejor ni te emociones 😬',
+      name + ' anda bien distante hoy 👀',
+      'Uy... ' + name + ' mejor nada 💀',
+      name + ' hoy no trae ganas la neta 😅',
+      'Se siente frío el asunto con ' + name + ' 🥶'
+    ];
 
-      } else if (porcentaje <= 40) {
+  } else if (porcentaje <= 40) {
 
-        frase = [
-          `${name} te quiere… pero leve 😬`,
-          `Hoy ${name} anda raro contigo 🤨`,
-          `No es el mejor día con ${name} pero tampoco el peor`,
-          `${name} está dudando hoy 👀`,
-          `${name} no anda muy convencid@`
-        ];
+    frase = [
+      name + ' te quiere... pero leve 😬',
+      'Hoy ' + name + ' anda raro contigo 🤨',
+      'No es el mejor día con ' + name + ' pero tampoco el peor',
+      name + ' está dudando hoy 👀',
+      name + ' no anda muy convencid@'
+    ];
 
-      } else if (porcentaje <= 60) {
+  } else if (porcentaje <= 60) {
 
-        frase = [
-          `Relación estable con ${name} 😌`,
-          `${name} te quiere, pero lo normal 😅`,
-          `Todo tranquilo con ${name}`,
-          `Definitivamente hay algo 👀`
-        ];
+    frase = [
+      'Relación estable con ' + name + ' 😌',
+      name + ' te quiere, pero lo normal 😅',
+      'Todo tranquilo con ' + name,
+      'Definitivamente hay algo 👀'
+    ];
 
-      } else if (porcentaje <= 80) {
+  } else if (porcentaje <= 80) {
 
-        frase = [
-          `${name} te quiere bastante 💘`,
-          `Se nota que ${name} está feliz contigo 😎`,
-          `Hay conexión con ${name} ✨`,
-          `${name} está bastante interesad@`,
-          `Todo fluye bien con ${name} 😏`
-        ];
+    frase = [
+      name + ' te quiere bastante 💘',
+      'Se nota que ' + name + ' está feliz contigo 😎',
+      'Hay conexión con ' + name + ' ✨',
+      name + ' está bastante interesad@',
+      'Todo fluye bien con ' + name + ' 😏'
+    ];
 
-      } else if (porcentaje < 100) {
+  } else if (porcentaje < 100) {
 
-        frase = [
-          `${name} es el amor de tu vida 💖`,
-          `Ya casi no pueden vivir sin ti 😳`,
-          `${name} está perdidamente enamorad@ 💘`,
-          `Esto ya es cosa seria con ${name} 🔥`,
-          `Amor eterno con ${name}`
-        ];
+    frase = [
+      name + ' es el amor de tu vida 💖',
+      'Ya casi no pueden vivir sin ti 😳',
+      name + ' está perdidamente enamorad@ 💘',
+      'Esto ya es cosa seria con ' + name + ' 🔥',
+      'Amor eterno con ' + name
+    ];
 
-      } else {
+  } else {
 
-        frase = [
-          `${name} ya se quiere casar contigo 💍`,
-          `Esto ya es amor eterno con ${name} ❤️‍🔥`,
-          `${name} está completamente perdid@ por ti 😳`,
-          `Ya valiste… ${name} es todo tuyo 💖`,
-          `Nivel máximo: amor infinito con ${name}`
-        ];
-      }
+    frase = [
+      name + ' ya se quiere casar contigo 💍',
+      'Esto ya es amor eterno con ' + name + ' ❤️‍🔥',
+      name + ' está completamente perdid@ por ti 😳',
+      'Ya valiste... ' + name + ' es todo tuyo 💖',
+      'Nivel máximo: amor infinito con ' + name
+    ];
+  }
 
-      const mensaje =
-        frase[Math.floor(Math.random() * frase.length)];
+  const mensaje =
+    frase[Math.floor(Math.random() * frase.length)];
 
-     return message.reply(
-'❤️ Nivel de amor: ' + porcentaje + '%\n💬 ' + mensaje
-);
-    }
+  return message.reply(
+    '❤️ Nivel de amor: ' + porcentaje + '%\n💬 ' + mensaje
+  );
+}
 
   } catch (err) {
     console.error("ERROR:", err);
