@@ -70,7 +70,7 @@ process.on('unhandledRejection', console.error);
 function setupVoiceReconnect(connection, channel, guild) {
 
   connection.on('stateChange', async (_, newState) => {
-   console.log('Voice State');
+   console.log('Voice State => ' + newState.status);
 console.log(newState.status);
 
     if (
@@ -207,11 +207,8 @@ client.on('messageCreate', async (message) => {
         minutes < 0
       ) {
         return message.reply(
-`❌ Uso inválido
-Ejemplo: n.setvc 300
-o
-n.setvc 300 15`
-        );
+'❌ Uso inválido\nEjemplo: n.setvc 300\no\nn.setvc 300 15'
+);
       }
 
       data[channel.id] = {
@@ -222,9 +219,8 @@ n.setvc 300 15`
       saveData();
 
       return message.reply(
-`✅ VC configurado
-⏱️ Tiempo base: ${hours}h ${minutes}m`
-      );
+'✅ VC configurado\n⏱️ Tiempo base: ' + hours + 'h ' + minutes + 'm'
+);
     }
 
     // ⏱️ VER VC
@@ -238,9 +234,8 @@ n.setvc 300 15`
 
       if (!vc) {
         return message.reply(
-`❌ Este VC no tiene tiempo configurado
-Usa: n.setvc`
-        );
+'❌ Este VC no tiene tiempo configurado\nUsa: n.setvc'
+);
       }
 
       const elapsed = Date.now() - vc.startTime;
@@ -252,11 +247,14 @@ Usa: n.setvc`
       const minutes = totalMinutes % 60;
 
       return message.reply(
-`🎧 VC
-━━━━━━━━━━━━━━━
-⏱️ ${hours}h ${minutes}m
-👥 ${channel.members.size} personas`
-      );
+'🎧 VC\n━━━━━━━━━━━━━━━\n⏱️ ' +
+hours +
+'h ' +
+minutes +
+'m\n👥 ' +
+channel.members.size +
+' personas'
+);
     }
 
     // ♻️ RESET VC
@@ -282,9 +280,8 @@ Usa: n.setvc`
 
       if (!target) {
         return message.reply(
-`❌ Menciona a alguien
-Ejemplo: n.lov @persona`
-        );
+'❌ Menciona a alguien\nEjemplo: n.lov @persona'
+);
       }
 
       const name =
@@ -358,10 +355,9 @@ Ejemplo: n.lov @persona`
       const mensaje =
         frase[Math.floor(Math.random() * frase.length)];
 
-      return message.reply(
-`❤️ Nivel de amor: ${porcentaje}%
-💬 ${mensaje}`
-      );
+     return message.reply(
+'❤️ Nivel de amor: ' + porcentaje + '%\n💬 ' + mensaje
+);
     }
 
   } catch (err) {
