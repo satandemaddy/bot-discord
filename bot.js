@@ -37,7 +37,7 @@ function saveData() {
 }
 
 // 🔥 AUTO RECONNECT AL INICIAR
-client.once('ready', () => {
+client.once('ready', async () => {
   console.log('Bot listo');
 
   try {
@@ -356,11 +356,14 @@ if (cmd === 'lov') {
     frase[Math.floor(Math.random() * frase.length)];
 
   return message.reply(
-    '❤️ Nivel de amor: ' + porcentaje + '%\n💬 ' + mensaje
-  );
-}
+  '❤️ Nivel de amor: ' + porcentaje + '%\n💬 ' + mensaje
+);
+    }
 
   } catch (err) {
+    console.error("ERROR:", err);
+  }
+});
     console.error("ERROR:", err);
   }
 });
