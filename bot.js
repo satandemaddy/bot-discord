@@ -360,9 +360,9 @@ if (cmd === 'lov') {
   );
 }
 
-  } catch (err) {
-    console.error("ERROR:", err);
-  }
+} catch (err) {
+  console.error("ERROR:", err);
+}
 });
 
 console.log("TOKEN existe:", !!process.env.TOKEN);
