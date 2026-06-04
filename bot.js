@@ -38,7 +38,7 @@ function saveData() {
 
 // 🔥 AUTO RECONNECT AL INICIAR
 client.once('ready', async () => {
-  console.log(`Bot listo como ${client.user.tag}`);
+  console.log('Bot listo');
 
   try {
     if (data.voice) {
