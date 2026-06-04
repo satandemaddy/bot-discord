@@ -355,15 +355,12 @@ if (cmd === 'lov') {
   const mensaje =
     frase[Math.floor(Math.random() * frase.length)];
 
-  return message.reply(
-  '❤️ Nivel de amor: ' + porcentaje + '%\n💬 ' + mensaje
-);
-    }
+    return message.reply(
+    '❤️ Nivel de amor: ' + porcentaje + '%\n💬 ' + mensaje
+  );
+}
 
   } catch (err) {
-    console.error("ERROR:", err);
-  }
-});
     console.error("ERROR:", err);
   }
 });
