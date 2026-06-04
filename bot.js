@@ -37,7 +37,7 @@ function saveData() {
 }
 
 // 🔥 AUTO RECONNECT AL INICIAR
-client.once('ready', async () => {
+client.once('ready', () => {
   console.log('Bot listo');
 
   try {
@@ -70,7 +70,8 @@ process.on('unhandledRejection', console.error);
 function setupVoiceReconnect(connection, channel, guild) {
 
   connection.on('stateChange', async (_, newState) => {
-    console.log(`Voice State => ${newState.status}`);
+   console.log('Voice State');
+console.log(newState.status);
 
     if (
       newState.status === VoiceConnectionStatus.Disconnected ||
