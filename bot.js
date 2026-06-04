@@ -368,4 +368,5 @@ Ejemplo: n.lov @persona`
   }
 });
 
+console.log("TOKEN existe:", !!process.env.TOKEN);
 client.login(process.env.TOKEN);
