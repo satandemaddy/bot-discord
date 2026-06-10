@@ -80,9 +80,15 @@ console.log(newState.status);
       console.log('Intentando reconectar al VC...');
 
       setTimeout(() => {
-        try {
 
-          const existing = getVoiceConnection(guild.id);
+  if (!data.voice) {
+    console.log('Reconexión cancelada');
+    return;
+  }
+
+  try {
+
+    const existing = getVoiceConnection(guild.id);
 
           if (existing) {
             existing.destroy();
