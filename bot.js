@@ -67,52 +67,54 @@ process.on('unhandledRejection', console.error);
 
 // 🔥 SISTEMA DE RECONEXIÓN
 function setupVoiceReconnect(connection, channel, guild) {
+  let reconnecting = false;
 
   connection.on('stateChange', async (_, newState) => {
-   console.log('Voice State => ' + newState.status);
-console.log(newState.status);
+    console.log('Voice State => ' + newState.status);
 
-    if (
-      newState.status === VoiceConnectionStatus.Disconnected ||
-      newState.status === VoiceConnectionStatus.Destroyed
-    ) {
-
-      console.log('Intentando reconectar al VC...');
-
-      setTimeout(() => {
-
-  if (!data.voice) {
-    console.log('Reconexión cancelada');
-    return;
-  }
-
-  try {
-
-    const existing = getVoiceConnection(guild.id);
-
-          if (existing) {
-            existing.destroy();
-          }
-
-          const newConnection = joinVoiceChannel({
-            channelId: channel.id,
-            guildId: guild.id,
-            adapterCreator: guild.voiceAdapterCreator,
-            selfDeaf: false
-          });
-
-          console.log('Reconectado exitosamente');
-
-          setupVoiceReconnect(newConnection, channel, guild);
-
-        } catch (err) {
-          console.error('Error reconectando:', err);
-        }
-      }, 5000);
+    if (newState.status !== VoiceConnectionStatus.Disconnected) {
+      return;
     }
+
+    if (reconnecting || !data.voice) {
+      return;
+    }
+
+    reconnecting = true;
+    console.log('Conexión perdida. Esperando para reconectar...');
+
+    setTimeout(() => {
+      try {
+        if (!data.voice) {
+          console.log('Reconexión cancelada');
+          reconnecting = false;
+          return;
+        }
+
+        const existing = getVoiceConnection(guild.id);
+
+        if (existing) {
+          existing.destroy();
+        }
+
+        const newConnection = joinVoiceChannel({
+          channelId: channel.id,
+          guildId: guild.id,
+          adapterCreator: guild.voiceAdapterCreator,
+          selfDeaf: false
+        });
+
+        console.log('Reconectado exitosamente');
+
+        setupVoiceReconnect(newConnection, channel, guild);
+      } catch (err) {
+        console.error('Error reconectando:', err);
+      } finally {
+        reconnecting = false;
+      }
+    }, 5000);
   });
 }
-
 client.on('messageCreate', async (message) => {
   try {
 
@@ -125,9 +127,7 @@ client.on('messageCreate', async (message) => {
     const channel = message.member?.voice?.channel;
 
     // 🔊 JOIN
-    if (cmd === 'join') {
-
-      if (message.author.id !== OWNER_ID) return;
+    if (cmd === 'join')
 
       if (!channel) {
         return message.reply('Métete a un VC primero');
@@ -169,30 +169,26 @@ client.on('messageCreate', async (message) => {
     // 🔇 LEAVE
     if (cmd === 'leave') {
 
-      if (message.author.id !== OWNER_ID) return;
+
 
       const connection = getVoiceConnection(message.guild.id);
 
-      if (!connection) {
-        return message.reply('No estoy en VC');
-      }
+if (!connection) {
+  return message.reply('No estoy en VC');
+}
 
-      connection.destroy();
+delete data.voice;
+saveData();
 
-      delete data.voice;
+connection.destroy();
 
-      saveData();
-
-      return message.reply('Me salí');
-    }
+return message.reply('Me salí');
+}
 
     // 🎬 SET VC
     if (cmd === 'setvc') {
 
-      if (message.author.id !== OWNER_ID) {
-        return message.reply('❌ No tienes permiso');
-      }
-
+     
       if (!channel) {
         return message.reply('❌ Debes estar en un VC');
       }
