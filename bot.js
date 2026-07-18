@@ -127,7 +127,7 @@ client.on('messageCreate', async (message) => {
     const channel = message.member?.voice?.channel;
 
     // 🔊 JOIN
-    if (cmd === 'join')
+    if (cmd === 'join') {
 
       if (!channel) {
         return message.reply('Métete a un VC primero');
